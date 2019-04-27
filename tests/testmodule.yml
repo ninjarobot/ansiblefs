@@ -1,0 +1,9 @@
+- name: test my new module
+  hosts: localhost
+  tasks:
+    - name: run the new module
+      action: ansiblefs
+      register: hello_message
+    - name: dump test output
+      debug:
+        msg: '{{ hello_message }}'
