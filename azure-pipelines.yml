@@ -1,0 +1,42 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+strategy:
+  matrix:
+    linux:
+      imageName: 'ubuntu-16.04'
+    mac:
+      imageName: 'macos-10.13'
+
+pool:
+  vmImage: $(imageName)
+
+steps:
+- task: DotNetCoreInstaller@0
+  inputs:
+    version: '2.2.203'
+- bash: |
+    sudo apt install -y clang-3.9 zlib1g-dev libkrb5-dev
+    dotnet publish -r linux-x64 -c Release -o "$BUILD_ARTIFACTSTAGINGDIRECTORY"
+  condition: eq( variables['Agent.OS'], 'Linux' )
+  displayName: Build on linux
+# macOS
+- bash: |
+    dotnet publish -r osx-x64 -c Release -o "$BUILD_ARTIFACTSTAGINGDIRECTORY"
+  condition: eq( variables['Agent.OS'], 'Darwin' )
+  displayName: Build on macOS
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: linux-ansiblefs
+  condition: eq( variables['Agent.OS'], 'Linux' )
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: macos-ansiblefs
+  condition: eq( variables['Agent.OS'], 'Darwin' )
