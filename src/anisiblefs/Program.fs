@@ -21,6 +21,7 @@ type Response = {
     Changed : bool
     Failed : bool
     Exception : string option
+    Facts: Map<string, Json>
 }
 with
     static member ToJson (r:Response) =
@@ -28,6 +29,7 @@ with
         *> Json.write "changed" r.Changed
         *> Json.write "failed" r.Failed
         *> Json.writeUnlessDefault "exception" None r.Exception
+        *> Json.writeUnlessDefault "ansible_facts" Map.empty r.Facts
 
 let inline parseDeserialize json =
     match json |> Json.tryParse with
@@ -56,6 +58,7 @@ let main argv =
                 Changed = false
                 Failed = true
                 Exception = Some (string ex)
+                Facts = Map.empty
             }
         | Result.Ok json ->
             match json |> parseDeserialize with
@@ -65,13 +68,18 @@ let main argv =
                     Changed = false
                     Failed = true
                     Exception = Some (err)
+                    Facts = Map.empty
                 }
             | Result.Ok (args:ModuleArgs) ->
+                let nicFacts =
+                    System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces()
+                    |> Array.mapi(fun i iface -> (System.String.Format ("nic-{0}", i)), Json.String(iface.Name))
                 {
                     Message = (System.String.Concat ("Hello, ", args.Name, " from F# module."))
                     Changed = true
                     Failed = false
                     Exception = None
+                    Facts = nicFacts |> Map.ofArray
                 }
     | _ ->
         {
@@ -79,6 +87,7 @@ let main argv =
             Changed = false
             Failed = true
             Exception = None
+            Facts = Map.empty
         }
     |> Json.serialize
     |> Json.format

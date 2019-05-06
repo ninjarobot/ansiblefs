@@ -1,9 +1,25 @@
 - name: test my new module
   hosts: localhost
+  vars:
+    person: 'Jim'
   tasks:
     - name: run the new module
       action: ansiblefs
+      args:
+        //name: "{{ person }}"
+        name: "{{ ansible_facts['processor_cores'] }}"
       register: hello_message
     - name: dump test output
       debug:
         msg: '{{ hello_message }}'
+    - name: run the new module again
+      action: ansiblefs
+      args:
+        name: "{{ hello_message.msg }}"
+      register: hello_message2
+    - name: dump test output again
+      debug:
+        msg: '{{ hello_message2 }}'
+    - name: dump facts
+      debug:
+        msg: '{{ ansible_facts }}'
