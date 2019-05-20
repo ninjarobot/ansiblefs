@@ -1,0 +1,8 @@
+<Directives>
+    <Application>
+        <!-- 20 MB -->
+        <Assembly Name="FSharp.Core" Dynamic="Required All" />
+        <!-- 18 MB -->
+        <Assembly Name="Argu" Dynamic="Required All" />
+    </Application>
+</Directives>

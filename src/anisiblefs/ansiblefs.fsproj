@@ -3,16 +3,24 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <RootAllApplicationAssemblies>false</RootAllApplicationAssemblies>
+    <!-- 13 MB -->
+    <!-- <RootAllApplicationAssemblies>false</RootAllApplicationAssemblies> -->
   </PropertyGroup>
+
+    <ItemGroup Condition="'$(CoreRT)' != 'false'">
+        <RdXmlFile Include="rd.xml" />
+        <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="1.0.0-alpha-*" />
+    </ItemGroup>
 
   <ItemGroup>
     <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="chiron" Version="6.3.1" />
-    <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="1.0.0-alpha-*" />
+    <PackageReference Include="chiron" Version="6.3.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Ini" Version="2.1.1" />
+    <PackageReference Update="FSharp.Core" Version="4.6.2" />
+    <PackageReference Include="Argu" Version="5.4.0" />
   </ItemGroup>
 
 </Project>

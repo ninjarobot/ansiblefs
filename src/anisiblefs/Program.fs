@@ -49,6 +49,10 @@ module Result =
 
 [<EntryPoint>]
 let main argv =
+
+    // +11 MB
+    let http = new System.Net.Http.HttpClient()
+
     match argv with
     | [|argsFilePath|] ->
         match File.ReadAllText argsFilePath |> Result.ofException with
